@@ -6,5 +6,47 @@ output:
 ---
 
 
+# karyoploteR
 
+[karyoploteR](http://bioconductor.org/packages/karyoploteR/) is an 
+R/Bioconductor package to plot data along the genome. It is data agnostic, 
+meaning that it does not know anything about you data (it doesn't know bioogy!),
+and thus is very flexible, because it makes no assumptions about your data. Oh,
+and it's also organism agnostic. It can work with ANY genome, so very useful for
+those working with non-model organisms!
+
+It follows a philosophy similar to the base R graphics, where you start 
+creating a plot and then add additional graphical elements on top of it.
+
+You can get more information reading [the package vignette](http://bioconductor.org/packages/devel/bioc/vignettes/karyoploteR/inst/doc/karyoploteR.html),
+reading the inline documentation with `?function_name` or you can go to the
+karyoploteR tutorial page at [https://bernatgel.github.io/karyoploter_tutorial/](https://bernatgel.github.io/karyoploter_tutorial/), where you'll also find examples of somewhat complex plots. If 
+everything else fail, ask a question on [biostars](https://www.biostars.org/) 
+with the tag "karyoploter" or send me an email to bgel@igtp.cat!
+
+
+To install the package use BiocManager
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("karyoploteR")
+```
+
+and once it's installed, load it with `library()`
+
+```{r}
+library(karyoploteR)
+```
+
+
+
+## Let's get started
+
+To create our first karyoplot we'll call the function `plotKaryotype`.
+
+```{r}
+plotKaryotype()
+```
+
+ 
 
