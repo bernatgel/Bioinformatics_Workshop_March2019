@@ -1,0 +1,144 @@
+---
+title: "Visualization 2: Basic Plots"
+output:
+  html_document:
+    df_print: paged
+---
+
+We will see a few types of basic plots and how to create them with R base
+graphics system
+
+To create the plots we'll use a simple dataset representing the results of
+an experiment measuring two proteins (`P1` and `P2`) in two groups cell types
+with two conditions for each type: `treated` and `control`.
+
+
+```{r}
+
+western <- read.delim("./datasets/western.txt")
+western
+
+```
+
+```{r}
+table(western$Treated)
+table(western$CellType)
+
+table(western$Treated, western$CellType)
+
+
+```
+
+## Barplots
+
+  Barplots represent single measures as the height of rectangles. They are 
+  widely used (both with and without error bars) but they tend to hide most
+  of the complexity of the data.
+  
+  Let's see how to plot the mean levels of one of the proteins, P1, in our
+  samples. To do that, we first compute the means and then plot them using 
+  [`barplot`](https://www.rdocumentation.org/packages/graphics/versions/3.5.2/topics/barplot). 
+
+```{r}
+means <- c(treated=mean(western$P1[western$Treated=="treated"]), control=mean(western$P1[western$Treated=="control"]))
+barplot(means)
+```
+
+And we can separate also the measures by cell type
+
+```{r}
+
+means <- tapply(western$P1, list(western$CellType, western$Treated), mean)
+means
+```
+
+and plot them one next to the other with `beside=TRUE`
+
+```{r}
+barplot(means, beside=TRUE, col = c("dodgerblue", "skyblue"), main="Levels of P1")
+legend("topleft", legend = levels(western$CellType), fill =  c("dodgerblue", "skyblue"))
+```
+
+And we can make them horizontal with the `horiz` parameter
+
+```{r}
+barplot(means, beside=TRUE, col = c("dodgerblue", "skyblue"), main="Levels of P1", horiz = TRUE)
+legend("bottomright", legend = levels(western$CellType), fill =  c("dodgerblue", "skyblue"))
+```
+
+#### Additional resources
+
+* [Building Barplots with Error Bars](https://datascienceplus.com/building-barplots-with-error-bars/)
+* [Bar Plots (Quick-R)](https://www.statmethods.net/graphs/bar.html)
+* [ggplot2 barplots : Quick start guide](http://www.sthda.com/english/wiki/ggplot2-barplots-quick-start-guide-r-software-and-data-visualization)
+
+
+## Boxplots
+
+  Boxplots show a more information than barplots, since they show the median, 
+  the interquartile range and usually single out outliers. To create a 
+  boxplot we simply need to call the [`boxplot`](https://www.rdocumentation.org/packages/graphics/versions/3.5.2/topics/boxplot)
+  function.
+
+  In this case we do not have to compute the summary statistics ourselves, since
+  they will be computed by the function itself.
+
+```{r}
+  boxplot(western$P1~western$Treated)
+```
+
+Using the same formula notation, we can separate the samples by cell type
+
+```{r}
+  boxplot(P1~CellType*Treated, data=western,  col =  c("dodgerblue", "skyblue"),
+          ylab="P1 level")
+```
+
+With box plots we can see that there are more differences by celltype in the 
+treated group than we saw using barplots.
+
+However, when the total number of points allow it, it might make sense to add
+the actual data points to the plot. We can doo that with [`stripchart`](https://www.rdocumentation.org/packages/graphics/versions/3.5.2/topics/stripchart).
+
+```{r}
+  stripchart(P1~CellType*Treated, data=western)
+```
+
+As you can see the defaults are... offputting and not very compatible with the 
+boxplots we just created. but changing a couple of parameters the chart improves
+quite a bit.
+
+```{r}
+ stripchart(P1~CellType*Treated, data=western, vertical=TRUE, pch=19)
+```
+
+and we can combine both charts into one using the `add` parameter of stripchart
+so it does not start a new plot.
+
+```{r}
+  boxplot(P1~CellType*Treated, data=western,  ylab="P1 level")
+  stripchart(P1~CellType*Treated, data=western, vertical=TRUE,
+             add=TRUE, pch=19, col=c("dodgerblue", "skyblue"))
+```
+
+### Additional Resources
+
+* [Box Plots (Quick-R)](https://www.statmethods.net/graphs/boxplot.html)
+* [ggplot2 box plot : Quick start guide](http://www.sthda.com/english/wiki/ggplot2-box-plot-quick-start-guide-r-software-and-data-visualization)
+* [Boxplots with ggplot2](http://t-redactyl.io/blog/2016/04/creating-plots-in-r-using-ggplot2-part-10-boxplots.html)
+
+Violin plots
+* [The vioplot package](https://cran.r-project.org/web/packages/vioplot/index.html)ç
+* [Split violin plots](https://cran.r-project.org/web/packages/vioplot/vignettes/violin_split.html)
+* [Violin plots with ggplot2](http://www.sthda.com/english/wiki/ggplot2-violin-plot-quick-start-guide-r-software-and-data-visualization)
+
+
+# Visualization types
+
+- Basic plots
+  - scatter
+  - bars
+  - boxplots
+  - lines
+  - adding additional elements
+  
