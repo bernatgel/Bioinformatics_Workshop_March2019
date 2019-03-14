@@ -232,3 +232,20 @@ for colors, `lwd` for width of lines, `cex` for text sizes...
 Most of these parameters are standard but they are easy to forget. Going to
 google and seraching for "R graphical parameters" will lead you [to pages 
 explaining](http://www.sthda.com/english/wiki/graphical-parameters) [them in detail](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/par.html). With these parameters is how we can achieve 
+## Saving plots
+
+Use [`png`](https://www.rdocumentation.org/packages/grDevices/versions/3.4.1/topics/png)
+or [`pdf`](https://www.rdocumentation.org/packages/grDevices/versions/3.5.2/topics/pdf) 
+before plotting and call `dev.off()` to close the graphical device when you 
+finish your plot.
+
+**IMPORTANT!!!!** bitmap based devices specify the width and height in pixels,
+but pdf do it in inches! Creating a 600inch pdf can lead to HUGE pdf that will 
+probably hang your computer... 
+
+
+## Additional Resources
+
+* [R Base Graphics: An Idiot's Guide](https://rstudio-pubs-static.s3.amazonaws.com/7953_4e3efd5b9415444ca065b1167862c349.html)
+* [The R graph gallery](https://www.r-graph-gallery.com/)
+* [Caveats (from Data to Viz)](https://www.data-to-viz.com/caveats.html)
