@@ -87,41 +87,102 @@ or use ggplot to plot them all
 
 ## ggplot2 or R base graphics?
 
-  In R  there are two main ways of creating graphics: R base graphics and ggplot2.
+  In R there are different ways of creating graphics, but the two main and 
+  most used are R base graphics and ggplot2.
   
+  ### ggplot2
+  [ggplot2](https://ggplot2.tidyverse.org/) is a system to create graphics
+  based on "The Grammar of Graphics". In `ggplot2` the graphics are created 
+  declaratively, that is, you have to "explain" how to build your plot 
+  (i.e. use this variable for the x position, use that variable for the points 
+  color, etc...) and ggplot will take care of creating it. 
+
+  For example, using a standard test dataset with information on cars including
+  miles per gallon (mpg), car class, etc, we can easily create a plot like this.
   
 
+```{r}
+library(ggplot2)
 
-# Visualization types
-
-- Basic plots
-  - scatter
-  - bars
-  - boxplots
-  - lines
-  - adding additional elements
-  
-- Heatmaps
-  - pheatmap 
-  
-  
-- Graphs (nodes and edges)
-  - Gene set enrichment Miriam
-  
-- karyoploteR
-
-
-
-
-
-
-
-```{r, TEST_CHUNK}
-plot(cars)
+ggplot(mpg, aes(displ, hwy, colour = class)) + 
+  geom_point()
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+  Plots created with ggplot with default parameters are quite good and you can 
+  easily change either changing individual parameters or using themes
+  
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+ggplot(mpg, aes(displ, hwy, colour = class)) + 
+  geom_point() + theme_minimal()
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+  ggplot2 is part of the [tidyverse](https://www.tidyverse.org/), a "universe" 
+  of packages (dplyr, tibble, purrr...) working together with "tidy" data. 
+
+  Working with the tidyverse packages usually forces you to think on your data 
+  and analysis in a very specific way. Creating graphics with ggplot2 is not
+  an exception, and it forces you to think about your graphics as a mapping of
+  data into graphics aesthetics, geometries, etc. This might work for you 
+  or might not, and both ggplot2 and the tidyverse have lovers and haters. 
+  In any case it is powerful tool and for many people if the first entrance
+  to data analysis with R.
+  
+  There are quite a few great resources to learn data science with R that 
+  heavily use ggplot and the tidyverse, since you can get quite satisfying 
+  results with a moderate effort. I would specially recommend 
+  [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham, the author
+  of ggplot2, most of the tidyverse and one of the persons behind Rstudio. 
+  You can read the whole book online for free or buy a physical book.
+  
+### R Base Graphics
+
+  As their name suggests, the R base graphics are the basic graphic system of R
+  on top of which everything else is built. 
+  
+  R base graphics are, by default, more crude than ggplot2. They do not include
+  colors unless instructed to, they do not no include a legend by default 
+  (although adding one is easy)... They might be seen a lower level (as in 
+  closer to the machine) than other systems.
+  
+  In R base graphics you start by creating a plot, and then add additional 
+  graphical elements by calling different graphical functions.
+  
+  Using the same data as for the ggplot2 example
+  
+```{r}
+mpg <- data.frame(mpg)
+
+plot(x=mpg$displ, y=mpg$hwy)
+```
+
+We get a BW plot with just the data, axis and not much more. However, we can 
+easily change the axis labels and add color and with 
+a few more lines we can add a legend and label a couple of points.
+
+```{r}
+mpg$class <- as.factor(mpg$class)
+plot(x=mpg$displ, y=mpg$hwy, col=mpg$class, pch=19, ylab = "Highway miles per gallon", xlab="engine displacement (liters)")
+legend('topright', legend = levels(mpg$class), col = 1:7, cex = 0.8, pch = 19)
+max.hwy <- which.max(mpg$hwy)
+text(x=mpg$displ[max.hwy], y=mpg$hwy[max.hwy], labels = mpg$model[max.hwy], pos=4)
+min.hwy <- which.min(mpg$hwy)
+text(x=mpg$displ[min.hwy], y=mpg$hwy[min.hwy], labels = mpg$model[min.hwy], pos=4)
+```
+  
+  With the R base graphics you can create simple graphics easily. While
+  defaults are not as pretty as the ggplot2 counterparts, they
+  have a looooot of customization potential.
+  
+### Additional Resources
+
+* [Comparing ggplot2 and R Base Graphics (Flowindata)](https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/)
+* [Tufte in R (comparison of Tufte style graphics with ggplot2 and R base graphics)](http://motioninsocial.com/tufte/)
+* [Why I don't use ggplot2 (SimplyStatistics)](https://simplystatistics.org/2016/02/11/why-i-dont-use-ggplot2/)
+* [R graphics - ggplot vs base (nimahejazi)](https://blog.nimahejazi.org/posts/r-graphics-ggplot-vs-base/)
+* [ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
+* [50 ggplot2 Visualizations (with Full R code)](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+
+
+
+
