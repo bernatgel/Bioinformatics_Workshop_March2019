@@ -132,13 +132,103 @@ Violin plots
 * [Split violin plots](https://cran.r-project.org/web/packages/vioplot/vignettes/violin_split.html)
 * [Violin plots with ggplot2](http://www.sthda.com/english/wiki/ggplot2-violin-plot-quick-start-guide-r-software-and-data-visualization)
 
+## Scatter plots
 
-# Visualization types
-
-- Basic plots
-  - scatter
-  - bars
-  - boxplots
-  - lines
-  - adding additional elements
+  Plotting data as simple points gives us additional possibilities. For example
+  we can plot the values of P1 against the values of P2
   
+```{r}
+  plot(x=western$P1, y=western$P2)
+```
+
+And make it a bit more pleasing and informative
+
+```{r}
+  plot(x=western$P1, y=western$P2, main="P1 vs P2", xlab="P1 levels",
+       ylab="P2 levels", pch=19)
+```
+
+and we can add a linear regression model
+
+```{r}
+ linearMod <- lm(western$P1 ~ western$P2)
+ summary(linearMod) 
+```
+
+With this model it would seem that the levels of P1 and P2 are 
+correlated and that both proteins and not independent.
+
+We can even plot the regression line with [`abline`](https://www.rdocumentation.org/packages/graphics/versions/3.5.2/topics/abline)
+
+```{r}
+plot(x=western$P1, y=western$P2, main="P1 vs P2", xlab="P1 levels",
+       ylab="P2 levels", pch=19)
+abline(linearMod)
+```
+
+However, if we plot the treated and untreated cases and separate the cell types 
+1 and 2 we'll see that the relation between the two proteins is not that clear.
+
+```{r}
+plot(x=western$P1, y=western$P2, main="P1 vs P2", xlab="P1 levels",
+       ylab="P2 levels", col=western$Treated, pch=ifelse(western$CellType=="type1", 19, 12))
+abline(linearMod)
+legend("topleft", legend=c("type1", "type2"), pch=c(19, 12))
+```
+
+This is an example of [the Simpson's Paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
+where the association between two variables may be reversed when the different
+groups of data are studied independenly.
+
+![The Simpson's Paradox](./images/simpsons-paradox.gif)
+
+
+## Other basic graphs
+
+### Lines
+
+To plot lines we can either use `plot` with `type="l"` or use the `lines` 
+function if a plot is already active.
+
+```{r}
+  x <- c(1:10)
+  y <- c(3,5,6,3,7,8,5,7,10,5)
+  plot(x=x, y=y, type="l")
+```
+
+  
+```{r}
+  plot(x=x, y=y)
+  lines(x=x, y=y, lwd=4, lty=2)
+```
+
+### Rectangles
+
+  To plot rectangles we have to specify to x's and two y's
+  
+```{r}
+  plot(x=x, y=y)
+  lines(x=x, y=y, lwd=4, lty=2)
+  rect(xleft=4.5, xright=6.5, ybottom=6, ytop=9, col=NA, border="red", lwd=2)
+```
+
+
+### Text
+
+  To plot text we can use the `text` function. It works in the same way `points`
+  does, but with an additional `labels` argument.
+  
+```{r}
+  plot(x=x, y=y)
+  lines(x=x, y=y, lwd=4, lty=2)
+  text(x=6, y=8, labels = "Important!", col="red", cex=2, pos=3)
+```
+
+## Graphical Parameters
+
+You'll have noticed that most of these functions share certain parameters: `col`
+for colors, `lwd` for width of lines, `cex` for text sizes...
+
+Most of these parameters are standard but they are easy to forget. Going to
+google and seraching for "R graphical parameters" will lead you [to pages 
+explaining](http://www.sthda.com/english/wiki/graphical-parameters) [them in detail](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/par.html). With these parameters is how we can achieve 
