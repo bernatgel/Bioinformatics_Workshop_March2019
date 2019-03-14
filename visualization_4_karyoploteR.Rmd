@@ -45,8 +45,110 @@ library(karyoploteR)
 To create our first karyoplot we'll call the function `plotKaryotype`.
 
 ```{r}
-plotKaryotype()
+kp <- plotKaryotype()
 ```
 
- 
+  By default it will create a karyoplot of the Human genome version hg19 (GRCh37). To 
+  use another genome we can specify its name, for example "mm10" for mouse
+  
+```{r}
+kp <- plotKaryotype(genome="mm10")
+```
+  
+or for drosophila, "dm6"
+
+```{r}
+available.genomes()
+library(BSgenome)
+kp <- plotKaryotype(genome="dm6")
+```
+
+For a few organisms karyoploteR has the chromosomes information. If it
+has no information on about a genome, it will try to load the corresponding
+BSgenome object and if that is not possible, it will fail.
+
+For such cases, we can use a custom genome, a GRanges object with one
+range per chromosome.
+
+```{r}
+custom.genome <- toGRanges(c("A:1-1000", "B:1-800"))
+kp <- plotKaryotype(genome=custom.genome)
+kpAddBaseNumbers(kp, tick.dist = 100)
+```
+
+It is also possible to plot only a few chromosomes using the... "chromosomes"
+parameter.
+
+```{r}
+kp <- plotKaryotype(chromosomes=c("chr3", "chr5", "chr17"))
+```
+
+## Add some data!
+
+Once we have a karyoplot we can add data into it with any of the the available 
+plotting functions. For example, one point
+
+```{r}
+kp <- plotKaryotype(chromosomes=c("chr1", "chr2"))
+kpPoints(kp, chr="chr1", x=10e6, y=0.5, col="red")
+```
+
+or many
+
+```{r}
+tiles <- unlist(tileGenome(kp$chromosome.lengths, tilewidth = 1e5))
+y <- rnorm(length(tiles), mean = 0.5, sd=0.1)
+y[1400:1600] <- y[1400:1600]+0.2
+kp <- plotKaryotype(chromosomes=c("chr1", "chr2"))
+kpPoints(kp, data = tiles, y=y, col="blue")
+```
+
+And we can control the appearance of the graphics with the same standard graphics
+parameters we have seen before.
+
+```{r}
+kp <- plotKaryotype(chromosomes=c("chr1"))
+kpPoints(kp, chr="chr1", x=1:20*10e6, y=1:20*1/20, col=rainbow(20), cex=1:20/3, pch=1:20)
+```
+
+We can use `kpLines`, `kpArrows`, `kpText`, `kpRect`... to plot simple graphical primitives on the genome.
+
+## And what about real data?
+
+karyoploteR has a second group of plotting function that start with "kpPlot".
+This functions take a sligthly more complex data, usually perform some kind 
+of small computation and plot. 
+
+We'll see a few examples
+
+### Plotting genes
+
+```{r}
+  library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+  library(org.Hs.eg.db)
+  all.genes <- filterChromosomes(genes(TxDb.Hsapiens.UCSC.hg19.knownGene))
+  all.genes
+```
+
+and select randomñy 20 of them as our reeeeally favourite genes
+
+```{r}
+  my.genes <- sample(all.genes, size = 20)
+  my.genes
+```
+
+Now get the symbol of these genes using from the Entrez GeneId identifier
+
+```{r}
+  symbols <- select(org.Hs.eg.db, keys=my.genes$gene_id, keytype="ENTREZID", columns="SYMBOL")
+  my.genes$symbol <- symbols[,2]
+  my.genes
+```
+
+and plot them using `kpPlotMarkers`
+
+```{r}
+kp <- plotKaryotype()
+kpPlotMarkers(kp, data=my.genes, labels = my.genes$symbol, text.orientation = "horizontal", cex=0.5 , r1=0.6)
+```
 
