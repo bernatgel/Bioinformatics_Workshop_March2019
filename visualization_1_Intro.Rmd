@@ -185,4 +185,14 @@ text(x=mpg$displ[min.hwy], y=mpg$hwy[min.hwy], labels = mpg$model[min.hwy], pos=
 
 
 
+## Proposed work
 
+  1 - Can you create a boxplot with the expression data you have from yesterday?
+  2 - Can you set the box color according to the sample type?
+  3 - Save the image as a pdf, 7 inches high, 12 wide. Add a main title and adjust the axis labeling, text size, etc...
+  4 - Plot the correlation between samples NL1 and HCC1. 
+  5 - Add a diagnoal line representing the perfect correlation.
+  7 - Add a text label highlighting the gene with highest expression on HCC1 sample.
+  6 - Save it as a png, 2000*2000 and adjust text sizes, axis labels to get a publication ready figure.
+  7 - Can you create a new version of that image shwoing only the very low expressed genes?
+  
