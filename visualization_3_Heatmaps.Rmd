@@ -100,7 +100,11 @@ heatmap.2(top100, trace = "none", col=rev(mypalette(50)),
 * [RNA-seq analysis in R](https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html)
 
 
+## Proposed work
 
+  1 - Change the color of the heatmap to blue-white-red
+  2 - Remove the dendograms of the genes but leave the samples one in place
+  3 - Save the heatmap in a pdf and adjust the label sizes so at least sample names are readable
 
 
 
