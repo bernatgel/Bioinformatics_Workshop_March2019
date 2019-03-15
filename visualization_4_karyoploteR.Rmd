@@ -130,7 +130,7 @@ We'll see a few examples
   all.genes
 ```
 
-and select randomñy 20 of them as our reeeeally favourite genes
+and select randomly 20 of them as our reeeeally favourite genes
 
 ```{r}
   my.genes <- sample(all.genes, size = 20)
@@ -151,4 +151,52 @@ and plot them using `kpPlotMarkers`
 kp <- plotKaryotype()
 kpPlotMarkers(kp, data=my.genes, labels = my.genes$symbol, text.orientation = "horizontal", cex=0.5 , r1=0.6)
 ```
+
+
+### Plot the density of reads in a BAM file
+
+Given a BAM file, how are the reads distributed accross the genome?
+
+```{r}
+kp <- plotKaryotype()
+kpPlotBAMDensity(kp, data="datasets/ChIP-seq_sample/NL1_h3K27ac_sample.rmdup.bam", col="dodgerblue")
+```
+
+```{r}
+kp <- plotKaryotype(chromosomes="chr10")
+kpAddBaseNumbers(kp)
+kpPlotBAMDensity(kp, data="datasets/ChIP-seq_sample/NL1_h3K27ac_sample.rmdup.bam", col="dodgerblue")
+```
+
+
+```{r}
+kp <- plotKaryotype(zoom="chr10:40e6-45e6")
+kpAddBaseNumbers(kp, tick.dist = 5e5)
+kpPlotBAMDensity(kp, data="datasets/ChIP-seq_sample/NL1_h3K27ac_sample.rmdup.bam", col="dodgerblue", window.size = 10000)
+```
+
+
+
+### Plot Regions on the genome
+
+As an example, plot the peaks you found yesterday
+
+```{r}
+peaks <- toGRanges("datasets/ChIP-seq_sample/peaks/NL1_h3K27ac_peaks.broadPeak")
+
+kp <- plotKaryotype(chromosomes = "chr1")
+kpPlotRegions(kp, data=peaks)
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
