@@ -1,0 +1,117 @@
+---
+title: "Visualization 3: Heatmaps"
+output:
+  html_document:
+    df_print: paged
+---
+
+Heatmaps are widely used in bioinformatics. They are easy to create with the
+right packages. We'll work with `heatmap.2` from the [gplots](https://cran.r-project.org/web/packages/gplots/index.html)
+package there are other good options.
+
+We'll start getting some example gene expression data from the DeSeq2 
+vignette 
+
+
+```{r}
+if(!requireNamespace("pasilla", quietly = TRUE)) BiocManager::install("pasilla")
+  library(pasilla)
+if(!requireNamespace("DESeq2", quietly = TRUE)) BiocManager::install("DESeq2")
+  library(DESeq2)
+
+pasCts <- system.file("extdata", "pasilla_gene_counts.tsv", package="pasilla", mustWork=TRUE)
+pasAnno <- system.file("extdata", "pasilla_sample_annotation.csv", package="pasilla", mustWork=TRUE)
+cts <- as.matrix(read.csv(pasCts,sep="\t",row.names="gene_id"))
+coldata <- read.csv(pasAnno, row.names=1)
+coldata <- coldata[,c("condition","type")]
+
+rownames(coldata) <- sub("fb", "", rownames(coldata))
+cts <- cts[, rownames(coldata)]
+
+dds <- DESeqDataSetFromMatrix(countData = cts,
+                              colData = coldata,
+                              design = ~ condition)
+dds$condition <- relevel(dds$condition, ref = "untreated")
+dds
+
+```
+
+and analysing it using DeSeq2
+
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+res <- lfcShrink(dds, coef = 2, res = res)
+res
+
+```
+
+To plot the heatmap, in this case we'll use the counts matrix
+
+```{r}
+  counts <- counts(dds, normalized=TRUE)
+  counts <- log(counts)
+  head(counts)
+```
+
+and we'll plot a heatmap with the significant DE genes
+
+```{r}
+top100 <- counts[order(res$padj)[1:100],]
+
+
+heatmap.2(top100)
+
+```
+
+We can change the colors, and remove the "traces" over the data
+
+```{r}
+if(!requireNamespace("RColorBrewer", quietly = TRUE)) BiocManager::install("RColorBrewer")
+  library(RColorBrewer)
+
+mypalette <- brewer.pal(11,"RdYlBu")
+mypalette <- colorRampPalette(mypalette)
+
+heatmap.2(top100, trace = "none", col=rev(mypalette(50)))
+```
+
+
+
+With heatmap.2 we can add color bands to identify samples and genes.
+We will use `ColSideColors` for columns and `RowSideColors`for rows.
+
+```{r}
+column.cols <- ifelse(grepl("untr", colnames(top100)), "gold", "orchid")
+row.cols <- c(rep("black", 10), rep("gray", 10), rep("white", 80))
+
+
+heatmap.2(top100, trace = "none", col=rev(mypalette(50)),
+          ColSideColors = column.cols, RowSideColors = row.cols)
+
+```
+
+
+## Additional Resources
+
+* [A short tutorial for decent heat maps in R](http://sebastianraschka.com/Articles/heatmaps_in_r.html)
+* [Making a heatmap in R with the pheatmap package](https://davetang.org/muse/2018/05/15/making-a-heatmap-in-r-with-the-pheatmap-package/)
+* [Analyzing RNA-seq data with DESeq2](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix)
+* [RNA-seq analysis in R](https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html)
+
+
+## Proposed work
+
+  1 - Change the color of the heatmap to blue-white-red
+  2 - Remove the dendograms of the genes but leave the samples one in place
+  3 - Save the heatmap in a pdf and adjust the label sizes so at least sample names are readable
+
+
+
+
+
+
+
+
+
+

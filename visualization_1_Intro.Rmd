@@ -185,4 +185,3 @@ text(x=mpg$displ[min.hwy], y=mpg$hwy[min.hwy], labels = mpg$model[min.hwy], pos=
 
 
 
-
